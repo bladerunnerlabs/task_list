@@ -22,12 +22,18 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
+#include <linux/sched.h>
+#include <linux/init_task.h>
 
 static int __init list_tasks_init_module(void)
 {
-	int i = 1;
+	struct task_struct *task = &init_task;
 
-	printk(KERN_ALERT  "List tasks.");
+	/* Walk through the task list, until we hit the init_task_again */
+	do {
+		printk( KERN_INFO "*** %s [%d] parent %s\n",
+				task->comm, task->pid, task->parent->comm);
+	} while ((task = next_task(task)) != &init_task);
 
 	return 0;
 }
